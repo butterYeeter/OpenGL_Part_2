@@ -3,22 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 
-const char * vertexShaderSource = "#version 330 core\n\
-layout (location = 0) in vec3 aPos;\n\
-out vec3 outPos;\n\
-\n\
-void main() {\n\
-gl_Position = vec4(aPos, 1.0);\n\
-outPos = aPos;\n\
-}";
+const char * vertexShaderSource = "#version 330 core\nlayout (location = 0) in vec3 aPos;\nout vec3 outPos;\n\nvoid main() {\ngl_Position = vec4(aPos, 1.0);\noutPos = aPos;\n}";
 
-const char * fragmentShaderSource = "#version 330 core\n\
-out vec4 FragColor;\n\
-in vec3 outPos;\n\
-\nvoid main()\n\
-{\n\
-FragColor = vec4(outPos, 1.0);\n\
-}";
+const char * fragmentShaderSource = "#version 330 core\nout vec4 FragColor;\nin vec3 outPos;\n\nvoid main()\n{\nFragColor = vec4(sin(outPos) + 0.3, 1.0);\n}";
 
 void processInput(GLFWwindow *window)
 {
@@ -70,8 +57,8 @@ int main()
 	unsigned int vertexShader;
 	unsigned int fragmentShader;
 
-	glCreateShader(GL_VERTEX_SHADER);
-	glCreateShader(GL_FRAGMENT_SHADER);
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(vertexShader);
@@ -97,7 +84,7 @@ int main()
 	{
 		processInput(window);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
