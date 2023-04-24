@@ -3,9 +3,27 @@
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 
-const char * vertexShaderSource = "#version 330 core\nlayout (location = 0) in vec3 aPos;\nout vec3 outPos;\n\nvoid main() {\ngl_Position = vec4(aPos, 1.0);\noutPos = aPos;\n}";
+#define GLSL(src) "#version 330 core\n" #src
 
-const char * fragmentShaderSource = "#version 330 core\nout vec4 FragColor;\nin vec3 outPos;\n\nvoid main()\n{\nFragColor = vec4(sin(outPos) + 0.3, 1.0);\n}";
+const char * vertexShaderSource = GLSL(
+	layout (location = 0) in vec3 aPos;
+	layout (location = 1) in vec3 aColor;
+	out vec3 outColor;
+
+	void main() {
+		gl_Position = vec4(aPos, 1.0);
+		outColor = aColor;
+	}
+);
+
+const char * fragmentShaderSource = GLSL(
+	out vec4 FragColor;
+	in vec3 outColor;
+
+	void main() {
+		FragColor = vec4(vec3(1.0), 1.0);
+	}
+);
 
 void processInput(GLFWwindow *window)
 {
@@ -39,10 +57,12 @@ int main()
 	glViewport(0, 0, 800, 600);
 
 	float vertices[] = {
-		0.5f, 0.0f, 0.0f,
-		0.0f, 0.5f, 0.0f,
-		-0.5f, 0.0f, 0.0f
+		0.5f, 0.0f, 0.0f,		1.0f, 0.0f, 0.0f,	
+		0.0f, 0.5f, 0.0f,		0.0f, 1.0f, 0.0f,
+		-0.5f, 0.0f, 0.0f,		0.0f, 0.0f, 1.0f
 	};
+
+	printf("%s\n", vertexShaderSource);
 
 	unsigned int VBO;
 	unsigned int VAO;
@@ -77,8 +97,10 @@ int main()
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)3);
+	glEnableVertexAttribArray(1);
 
 	while(!glfwWindowShouldClose(window))
 	{
